@@ -6,8 +6,8 @@ import numpy
 	Splits a matrix in 4 equal submatrices
 
 	#params
-	M	numpy.matryx	"Original matrix"
-	n	integer	"Dimension of the matrix"
+	M	numpy.matryx	Original matrix
+	n	integer	Dimension of the matrix
 
 	#description
 	This function takes a matrix and then.

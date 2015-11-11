@@ -7,21 +7,32 @@ void yyerror (char const *);
 %}
 
 %union{
-	float valFloat;
 	char* valString;
 }
 
-/*%error-verbose*/
-%token <valString> 	SHORT_DESCRIPTION HEADER_FUNCTION
-%type <valString>		params
+%error-verbose
+
+%token <valString>	SUMMARY PARAM_WORD PARAM_SENTENCE DESCRIPTION EXAMPLE HEADER
+%type <valString>		params examples
 %start S
 
 %%
 
-S : 	SHORT_DESCRIPTION HEADER_FUNCTION
-	| 	SHORT_DESCRIPTION params FUNCTION
+S : SUMMARY params DESCRIPTION examples HEADER					{;}
 	;
 
-params : 	param_thingy										{printf("")}
-			|	param_thingy param_thingy
-			|	param_thingy param_thingy param_thingy
+params :	PARAM_WORD PARAM_WORD PARAM_SENTENCE					{;}
+			| PARAM_WORD PARAM_WORD PARAM_SENTENCE params		{;}
+	;
+
+examples : 	EXAMPLE examples											{;}
+			|	EXAMPLE														{;}
+	;
+
+%%
+
+
+int main() {
+	yyparse();
+	return 0;
+}

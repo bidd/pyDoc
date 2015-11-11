@@ -3,3 +3,6 @@ lex.yy.c
 
 #Executable file
 pydoc
+
+pydoc.tab.c
+pydoc.tab.h

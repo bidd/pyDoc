@@ -5,11 +5,11 @@ all: compile
 
 compile:
 	flex $(FUENTE).l
-	gcc -o $(FUENTE) lex.yy.c -ll
-
-clean:
-	rm $(FUENTE) lex.yy.c 
+	bison -o $(FUENTE).tab.c $(FUENTE).y -yd
+	gcc -w -o $(FUENTE) lex.yy.c $(FUENTE).tab.c -ll -ly
 
 run:
 	./$(FUENTE) < $(PRUEBA)
 
+clean:
+	rm $(FUENTE) lex.yy.c $(FUENTE).tab.c $(FUENTE).tab.h
