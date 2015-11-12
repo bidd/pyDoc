@@ -43,41 +43,34 @@ test2             [^#]*#\n\n
 
 <SUMMARY>{test}                     { printf("SUMMARY\n%s\n",yytext);
                                        BEGIN PYDOC;
-                                       yylval.valString = strdup(yytext);
-                                       return SUMMARY;}
+}
 
 <PARAMS>{param_word}                { printf("PARAM WORD\n%s\n",yytext);
-                                       yylval.valString = strdup(yytext);
-                                       return PARAM_WORD;}
+}
 <PARAMS>{double_linejump}           { BEGIN PYDOC;}
 <PARAMS>{param_sentence}            { printf("PARAM SENTENCE\n%s\n",yytext);
-                                       yylval.valString = strdup(yytext);
-                                       return PARAM_SENTENCE;}
+}
 
 <DESCRIPTION>{test2}                { printf("DESCRIPTION\n%s\n",yytext);
                                        BEGIN PYDOC;
-                                       yylval.valString = strdup(yytext);
-                                       return DESCRIPTION;}
+}
 
 <EXAMPLE>{test2}                    { printf("EXAMPLE\n%s\n",yytext);
                                        BEGIN PYDOC;
-                                       yylval.valString = strdup(yytext);
-                                       return EXAMPLE;}
+}
 
 <PYDOC>{closing}                    { BEGIN INITIAL;}
 
 "def"[^\n]+\n                       { printf("HEADER\n%s\n", yytext);
-                                       yylval.valString = strdup(yytext);
-                                       return HEADER;}
+}
 
-.                                   {}
-\n                                  {}
-EOF                                 {}
+.                                   {;}
+\n                                  {;}
+EOF                                 {;}
 
 %%
-/*
+
 int main(){
    yylex();
    return 0;
 }
-*/

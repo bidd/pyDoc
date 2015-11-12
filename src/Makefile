@@ -4,7 +4,7 @@ PRUEBA = file.py
 all: compile
 
 compile:
-	flex $(FUENTE).l
+	flex  $(FUENTE).l
 	bison -o $(FUENTE).tab.c $(FUENTE).y -yd
 	gcc -w -o $(FUENTE) lex.yy.c $(FUENTE).tab.c -ll -ly
 
