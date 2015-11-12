@@ -7,11 +7,11 @@ int pydoc = 0;
 %}
 
    /* === States === */
-%x PYDOC
-%x SUMMARY
-%x PARAMS
-%x DESCRIPTION
-%x EXAMPLE
+%x PYDOC_STATE
+%x SUMMARY_STATE
+%x PARAMS_STATE
+%x DESCRIPTION_STATE
+%x EXAMPLE_STATE
 
    /* === Opening/closing === */
 opening           '''pydoc
@@ -34,43 +34,50 @@ test2             [^#]*#\n\n
 
 %%
 
-{opening}                           { BEGIN PYDOC;}
+{opening}                                 { BEGIN PYDOC_STATE;}
 
-<PYDOC>{summary_tag}                { printf("BEGIN SUMMARY\n"); BEGIN SUMMARY;}
-<PYDOC>{params_tag}                 { printf("BEGIN PARAMS\n"); BEGIN PARAMS;}
-<PYDOC>{description_tag}            { printf("BEGIN DESCRIPTION\n"); BEGIN DESCRIPTION;}
-<PYDOC>{example_tag}                { printf("BEGIN EXAMPLE\n"); BEGIN EXAMPLE;}
+<PYDOC_STATE>{summary_tag}                { printf("BEGIN SUMMARY\n"); BEGIN SUMMARY_STATE;}
+<PYDOC_STATE>{params_tag}                 { printf("BEGIN PARAMS\n"); BEGIN PARAMS_STATE;}
+<PYDOC_STATE>{description_tag}            { printf("BEGIN DESCRIPTION\n"); BEGIN DESCRIPTION_STATE;}
+<PYDOC_STATE>{example_tag}                { printf("BEGIN EXAMPLE\n"); BEGIN EXAMPLE_STATE;}
 
-<SUMMARY>{test}                     { printf("SUMMARY\n%s\n",yytext);
-                                       BEGIN PYDOC;
-}
+<SUMMARY_STATE>{test}                     { printf("SUMMARY\n%s\n",yytext);
+                                          BEGIN PYDOC_STATE;
+                                          yylval.valString = strdup(yytext);
+                                          return SUMMARY;}
 
-<PARAMS>{param_word}                { printf("PARAM WORD\n%s\n",yytext);
-}
-<PARAMS>{double_linejump}           { BEGIN PYDOC;}
-<PARAMS>{param_sentence}            { printf("PARAM SENTENCE\n%s\n",yytext);
-}
+<PARAMS_STATE>{param_word}                { printf("PARAM WORD\n%s\n",yytext);
+                                          yylval.valString = strdup(yytext);
+                                          return PARAM_WORD;}
+<PARAMS_STATE>{double_linejump}           { BEGIN PYDOC_STATE;}
+<PARAMS_STATE>{param_sentence}            { printf("PARAM SENTENCE\n%s\n",yytext);
+                                          yylval.valString = strdup(yytext);
+                                          return PARAM_SENTENCE;}
 
-<DESCRIPTION>{test2}                { printf("DESCRIPTION\n%s\n",yytext);
-                                       BEGIN PYDOC;
-}
+<DESCRIPTION_STATE>{test2}                { printf("DESCRIPTION\n%s\n",yytext);
+                                          BEGIN PYDOC_STATE;
+                                          yylval.valString = strdup(yytext);
+                                          return DESCRIPTION;}
 
-<EXAMPLE>{test2}                    { printf("EXAMPLE\n%s\n",yytext);
-                                       BEGIN PYDOC;
-}
+<EXAMPLE_STATE>{test2}                    { printf("EXAMPLE\n%s\n",yytext);
+                                          BEGIN PYDOC_STATE;
+                                          yylval.valString = strdup(yytext);
+                                          return EXAMPLE;}
 
-<PYDOC>{closing}                    { BEGIN INITIAL;}
+<PYDOC_STATE>{closing}                    { BEGIN INITIAL;}
 
-"def"[^\n]+\n                       { printf("HEADER\n%s\n", yytext);
-}
+"def"[^\n]+\n                             { printf("HEADER\n%s\n", yytext);
+                                          yylval.valString = strdup(yytext);
+                                          return HEADER;}
 
-.                                   {;}
-\n                                  {;}
-EOF                                 {;}
+.                                         {;}
+\n                                        {;}
+EOF                                       {;}
 
 %%
-
+/*
 int main(){
    yylex();
    return 0;
 }
+*/

@@ -30,9 +30,8 @@ examples : 	EXAMPLE examples											{;}
 	;
 
 %%
-/*
+
 int main() {
 	yyparse();
 	return 0;
 }
-*/
