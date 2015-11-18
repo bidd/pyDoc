@@ -6,3 +6,5 @@ pydoc
 
 pydoc.tab.c
 pydoc.tab.h
+
+*.html
