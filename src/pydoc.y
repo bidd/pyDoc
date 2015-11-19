@@ -68,55 +68,70 @@ examples : 	EXAMPLE examples				{ strcpy( funs[$1.n].ex[funs[$1.n].ex_count], $1
 
 %%
 
-/*
-void print(){
-	struct fun f;
-	while (fun_count > 0){
-		fun_count--;
-		f = funs[fun_count];
-		printf("%s\n%s\n", f.header, f.summary);
-		while (f.param_count > 0){
-			f.param_count--;
-			printf("%s	%s	%s\n", f.params[f.param_count].name, f.params[f.param_count].type, f.params[f.param_count].descr);
-		}
-		printf("%s\n", f.descr);
-		while (f.ex_count > 0){
-			f.ex_count--;
-			printf("%s\n", f.ex[f.ex_count]);
-		}
-		printf("===============\n===============\n");
-	}
-}*/
-
-/*
-<!DOCTYPE html>
-<html>
-<head>
-<title>Page Title</title>
-</head>
-<body>
-
-<h1>This is a Heading</h1>
-<p>This is a paragraph.</p>
-
-</body>
-</html>
-*/
-
 void htmlHeader( FILE *fp){
-	fprintf( fp, "\<!DOCTYPE html>\n\
-	<html>\n\
-	<head>\n\
-	<title>Page Title</title>\n\
-	</head>\n\
-	<body>\n\
-	\n");
+	fprintf( fp, "<!DOCTYPE html>\
+	<html>\
+	<head>\
+	<title>Page Title</title>\
+	\
+	style>\
+		body{\
+			background-color: #FBFBF2;\
+		}\
+		#div1{\
+			background-color: #E5E6E4;\
+			margin-left: 10%;\
+			width: 80%;\
+			text-align: center;\
+			padding-top: 20px;\
+			padding-bottom: 20px;\
+		}\
+		#table1{\
+			background-color: #A6A2A2;\
+			margin-left: auto;\
+			margin-right: auto;\
+			padding-top: 20px;\
+			padding-bottom: 10px;\
+		}\
+		#table1 td, #table1 th{\
+			padding-top: 10px;\
+		}\
+		#table1 td{\
+			padding-right: 15px;\
+			text-align: right;\
+		}\
+	\
+	#table2{\
+		background-color: #A6A2A2;\
+		margin-left: auto;\
+		margin-right: auto;\
+		padding-top: 20px;\
+		padding-bottom: 10px;\
+	}\
+	\
+	#table2 td{\
+		padding-top: 10px;\
+	}\
+	\
+	.example{\
+		background-color: #A6A2A2;\
+		margin-left: auto;\
+		margin-right: auto;\
+		width: 70%;\
+	}\
+	</style>\
+	\
+	</head>\
+	<body>\
+	\
+	<div id = \"div1\">");
+
 }
 
 void htmlFooter( FILE *fp){
 	fprintf( fp, "\
-	\n\
-	</body>\n\
+	\
+	</body>\
 	</html>\
 	");
 }

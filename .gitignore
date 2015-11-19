@@ -8,3 +8,5 @@ pydoc.tab.c
 pydoc.tab.h
 
 *.html
+
+.DS_Store
