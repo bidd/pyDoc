@@ -1,6 +1,18 @@
 %{
+
+/*
+	==== TODO ====
+	-Make the name of the file read the title of the html main page.
+	-Make the name of the function the html function page.
+	-Read the imports in the python file and show them in the html main page to indicate dependencies.
+	-Find a way to add linejumps to examples:
+		-If \n can not be changed to <br> then indicate that at the end of each line <br> should be added.
+	-Give examples a css style with its own background to make them more easily readable
+*/
+
 #include <stdio.h>
 #include <string.h>
+#include "html_template.c"
 
 extern int yylineno;
 
@@ -69,71 +81,12 @@ examples : 	EXAMPLE examples				{ strcpy( funs[$1.n].ex[funs[$1.n].ex_count], $1
 %%
 
 void htmlHeader( FILE *fp){
-	fprintf( fp, "<!DOCTYPE html>\
-	<html>\
-	<head>\
-	<title>Page Title</title>\
-	\
-	style>\
-		body{\
-			background-color: #FBFBF2;\
-		}\
-		#div1{\
-			background-color: #E5E6E4;\
-			margin-left: 10%;\
-			width: 80%;\
-			text-align: center;\
-			padding-top: 20px;\
-			padding-bottom: 20px;\
-		}\
-		#table1{\
-			background-color: #A6A2A2;\
-			margin-left: auto;\
-			margin-right: auto;\
-			padding-top: 20px;\
-			padding-bottom: 10px;\
-		}\
-		#table1 td, #table1 th{\
-			padding-top: 10px;\
-		}\
-		#table1 td{\
-			padding-right: 15px;\
-			text-align: right;\
-		}\
-	\
-	#table2{\
-		background-color: #A6A2A2;\
-		margin-left: auto;\
-		margin-right: auto;\
-		padding-top: 20px;\
-		padding-bottom: 10px;\
-	}\
-	\
-	#table2 td{\
-		padding-top: 10px;\
-	}\
-	\
-	.example{\
-		background-color: #A6A2A2;\
-		margin-left: auto;\
-		margin-right: auto;\
-		width: 70%;\
-	}\
-	</style>\
-	\
-	</head>\
-	<body>\
-	\
-	<div id = \"div1\">");
+	fprintf( fp, html_header);
 
 }
 
 void htmlFooter( FILE *fp){
-	fprintf( fp, "\
-	\
-	</body>\
-	</html>\
-	");
+	fprintf( fp, html_footer);
 }
 
 int htmlFunctionOutput( struct fun f){
@@ -151,10 +104,11 @@ int htmlFunctionOutput( struct fun f){
 	fprintf( fp, "<p>%s - %s</p>\
 		<p>%s</p>\n", f.header, f.summary, f.descr);
 
+	fprintf( fp, "\
+		<table id = \"table1\">\n");
 	while (f.param_count > 0){
 		f.param_count--;
 		fprintf(fp, "\
-		<table style=\"width:80%\">\n\
 			<tr>\n\
 				<td>%s</td>\n\
 				<td>%s</td>\n\
@@ -185,20 +139,26 @@ int htmlOutput(){
 	htmlHeader( fp);
 
 	struct fun f;
+	fprintf( fp, "\
+		<table id=\"table1\">\n\
+			<tr>\n\
+				<th>FUNCTION</th>\n\
+				<th>DESCRIPTION</th>\n\
+			</tr>\n");
+
 	while (aux_fun_count > 0){
 		aux_fun_count--;
 		f = funs[aux_fun_count];
 
 		fprintf( fp, "\
-		<table style=\"width:80%\">\n\
 		  <tr>\n\
 		    <td><a href=\"%s.html\">%s</a></td>\n\
 		    <td>%s</td>\n\
-		  </tr>\n\
-		</table>\n", f.header, f.header, f.summary);
+		  </tr>\n", f.header, f.header, f.summary);
 
 		htmlFunctionOutput( f);
 	}
+	fprintf( fp, "		</table>\n");
 
 	htmlFooter( fp);
 
