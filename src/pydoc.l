@@ -29,8 +29,7 @@ example_tag       (?i:#example)
 double_linejump   \n{2}
 word              [^ \t\n]+
 sentence          [^\t\n]+
-param_name        ^{word}
-param_type        \t{word}
+param_type        ^{word}
 param_sentence    \t{sentence}
 single_line       [^\n]*
 multi_line        [^#]*#\n\n
@@ -48,28 +47,31 @@ multi_line        [^#]*#\n\n
                                           yylval.valX.s = strdup(yytext);
                                           yylval.valX.n = i;
                                           return SUMMARY;}
+<SUMMARY_STATE>\n                         {}
 
-<PARAMS_STATE>{param_name}                { yylval.valX.s = strdup(yytext);
+<PARAMS_STATE>{param_type}                { yylval.valX.s = strdup(yytext);
                                           yylval.valX.n = i;
-                                          return PARAM_NAME;}
-<PARAMS_STATE>{param_type}                { yylval.valString = strdup(&yytext[1]);
                                           return PARAM_TYPE;}
 <PARAMS_STATE>{double_linejump}           { BEGIN PYDOC_STATE;}
 <PARAMS_STATE>{param_sentence}            { yylval.valString = strdup(&yytext[1]);
                                           return PARAM_SENTENCE;}
+<PARAMS_STATE>\n                          {}
 
 <DESCRIPTION_STATE>{multi_line}           {BEGIN PYDOC_STATE;
                                           yylval.valString = strdup(&yytext[1]);
                                           return DESCRIPTION;}
+<DESCRIPTION_STATE>\n                     {}
 
 <EXAMPLE_STATE>{multi_line}               {BEGIN PYDOC_STATE;
                                           yylval.valX.s = strdup(yytext);
                                           yylval.valX.n = i;
                                           return EXAMPLE;}
+<EXAMPLE_STATE>\n                         {}
 
 <PYDOC_STATE>{closing}                    { BEGIN INITIAL;}
+<PYDOC_STATE>\n                           {}
 
-"def"[^(]+                               {yylval.valString = strdup(&yytext[4]);
+"def"[^(]+                                {yylval.valString = strdup(&yytext[4]);
                                           i++;
                                           return HEADER;}
 

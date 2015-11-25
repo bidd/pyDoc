@@ -3,12 +3,9 @@ import numpy
 
 '''
 #pydoc
-#summary
-Splits a matrix in 4 equal submatrices
-
 #params
-M	numpy.matryx	Original matrix
-n	integer	Dimension of the matrix
+numpy.matryx	Original matrix
+integer	Dimension of the matrix
 
 #description
 This function takes a matrix and then.
@@ -39,8 +36,8 @@ def split_matrix(M,n):
 BLABLA SUMMARY BLABLA
 
 #params
-BLA1	numpy.matryx	Original BLA matrix
-BLA2	integer	Dimension BLA2 matrix
+numpy.matryx	Original BLA matrix
+integer	Dimension BLA2 matrix
 
 #description
 This function BLA

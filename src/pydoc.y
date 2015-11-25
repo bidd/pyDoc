@@ -15,11 +15,11 @@
 #include "html_template.c"
 
 extern int yylineno;
+extern FILE * yyin;
 
 void yyerror (char const *);
 
 struct param{
-	char name[30];
 	char type[20];
 	char descr[100];
 };
@@ -49,10 +49,10 @@ fun_count = 0;
 	struct x valX;
 }
 
-%error-verbose
+/*%error-verbose*/
 
-%token <valString>	PARAM_TYPE PARAM_SENTENCE DESCRIPTION HEADER
-%token <valX>			SUMMARY PARAM_NAME EXAMPLE
+%token <valString>	PARAM_SENTENCE DESCRIPTION HEADER
+%token <valX>			SUMMARY PARAM_TYPE EXAMPLE
 %type <valString>		params examples
 %start S
 
@@ -62,13 +62,16 @@ S : SUMMARY params DESCRIPTION examples HEADER	S			{ strcpy( funs[$1.n].summary,
 																			strcpy( funs[$1.n].descr, $3);
 																			strcpy( funs[$1.n].header, $5);
 																			fun_count++;}
+	| SUMMARY params examples HEADER 							{ strcpy( funs[$1.n].summary, $1.s);
+																			strcpy( funs[$1.n].header, $4);
+																			fun_count++;}
+	| error params examples HEADER S								{ yyerror("Error: please include at least a brief summary\n");}
 	|																		{;}
 	;
 
-params :	PARAM_NAME PARAM_TYPE PARAM_SENTENCE params
-						{ strcpy( funs[$1.n].params[funs[$1.n].param_count].name, $1.s);
-						strcpy( funs[$1.n].params[funs[$1.n].param_count].type, $2);
-						strcpy( funs[$1.n].params[funs[$1.n].param_count].descr, $3);
+params :	PARAM_TYPE PARAM_SENTENCE params
+						{ strcpy( funs[$1.n].params[funs[$1.n].param_count].type, $1.s);
+						strcpy( funs[$1.n].params[funs[$1.n].param_count].descr, $2);
 						funs[$1.n].param_count++;}
 	|																		{;}
 	;
@@ -112,8 +115,7 @@ int htmlFunctionOutput( struct fun f){
 			<tr>\n\
 				<td>%s</td>\n\
 				<td>%s</td>\n\
-				<td>%s</td>\n\
-			</tr>\n", f.params[f.param_count].name, f.params[f.param_count].type, f.params[f.param_count].descr);
+			</tr>\n", f.params[f.param_count].type, f.params[f.param_count].descr);
 	}
 	fprintf( fp, "\
 		</table>");
@@ -127,8 +129,10 @@ int htmlFunctionOutput( struct fun f){
 	fclose( fp);
 }
 
-int htmlOutput(){
-	FILE *fp = fopen( "index.html", "w");
+int htmlOutput( char *filename){
+	char name[40];
+	snprintf( name, 40, "%s.html", filename);
+	FILE *fp = fopen( name, "w");
 	if (fp == NULL)
 		return -1;
 
@@ -165,11 +169,31 @@ int htmlOutput(){
 	fclose( fp);
 }
 
-int main() {
-	yyparse();
-	//print();
+int main( int argc, char *argv[]) {
 
-	htmlOutput();
+	if (argc < 2) {
+		printf("No file specified");
+		return -1;
+	} else {
+		int i = 1;
+		while (i < argc){
+			FILE *file = fopen( argv[i], "r");
+			if (file == NULL)
+				printf("Couldn't open file %s\n", argv[i]);
+			else {
+				yyin = file;
+				yyparse();
+				htmlOutput( argv[i]);
+			}
+			i++;
+		}
+	}
 
 	return 0;
+}
+
+void yyerror (char const *message) {
+	if ( strcmp(message,"syntax error") != 0) {
+		printf("%s", message);
+	}
 }
